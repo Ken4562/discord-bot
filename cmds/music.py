@@ -43,9 +43,9 @@ class LavalinkVoiceClient(discord.VoiceProtocol):
             # however this is not mandatory.
             self.client.lavalink = lavalink.Client(client.user.id)
             self.client.lavalink.add_node(
-                host="127.0.0.1",
+                host="",
                 port=2333,
-                password="KeN103001poqe",
+                password="",
                 region="asia",
                 name="default-node",
                 use_udp=True,
@@ -137,9 +137,9 @@ class Music(commands.Cog):
         if not hasattr(bot, "lavalink"):
             bot.lavalink = lavalink.Client(bot.user.id)
             bot.lavalink.add_node(
-                host="127.0.0.1",
+                host="",
                 port=2333,
-                password="KeN103001poqe",
+                password="",
                 region="us",
                 name="default-node",
             )
