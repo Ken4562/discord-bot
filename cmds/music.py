@@ -264,16 +264,10 @@ class Music(commands.Cog):
 
         if player.queue:
             next_track = player.queue[0]
-            # 這一行會先讓 Lavalink Server 開始下載 next_track
-            # 並放到它的內部 buffer 裡
             _ = await player.node.get_tracks(next_track.uri)
 
     @commands.check(create_player)
     async def _lyrics_updater(self, player, lyrics, message):
-        """
-        每隔一段時間讀 player.position，抓目前要顯示的歌詞，
-        只有內容變化時才呼叫 message.edit，並根據下一句歌詞時間調整 sleep。
-        """
         if not lyrics:
             await message.edit(
                 embed=discord.Embed(
@@ -286,17 +280,14 @@ class Music(commands.Cog):
 
         last_desc = None
         try:
-            # 尋找所有歌詞行的時間點，排成串
             time_points = [line.time for line in lyrics]
 
             while player.is_playing and not player.paused:
                 pos = player.position / 1000  # 毫秒轉秒
 
-                # 找出當前顯示範圍內的歌詞行
                 lines = [line.text for line in lyrics if abs(line.time - pos) <= 10]
                 desc = "\n".join(lines) or "...等待歌詞..."
 
-                # 只有當文字不一樣時才更新
                 if desc != last_desc:
                     embed = discord.Embed(
                         title=f"🎤 歌詞：{player.current.title}",
@@ -306,15 +297,11 @@ class Music(commands.Cog):
                     await message.edit(embed=embed)
                     last_desc = desc
 
-                # 為了不要固定 5 秒更新，我們動態算下一次醒來的時間：
-                # 找出下一個要顯示的歌詞行時間點
                 future_points = [t for t in time_points if t > pos]
                 if future_points:
                     next_t = min(future_points)
-                    # 目標時間是下一行顯示前 1 秒開始更新
                     wait = max(0.5, next_t - pos)
                 else:
-                    # 如果沒有下一行，固定間隔
                     wait = 5.0
 
                 await asyncio.sleep(wait)
