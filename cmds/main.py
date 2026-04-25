@@ -25,7 +25,7 @@ class Main(Cog_Extension):
     async def dice(self, ctx: commands.Context):
         await ctx.send(random.randint(1, 6))
 
-    @app_commands.command(name="piyen", description="選一個幸運兒")
+    @app_commands.command(name="pick", description="選一個幸運兒")
     async def piyen(self, interaction: discord.Interaction):
         members = [member for member in interaction.guild.members if not member.bot]
         if not members:
@@ -33,7 +33,7 @@ class Main(Cog_Extension):
             return
         selected_member = random.choice(members)
         await interaction.response.send_message(
-            f"今天要幹<@{selected_member.id}> 的屁眼"
+            selected_member.id
         )
 
     @app_commands.command(name="addtodo", description="紀錄代辦事項")
