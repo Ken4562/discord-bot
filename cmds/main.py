@@ -33,7 +33,7 @@ class Main(Cog_Extension):
             return
         selected_member = random.choice(members)
         await interaction.response.send_message(
-            selected_member.id
+            f"@{selected_member.id}"
         )
 
     @app_commands.command(name="addtodo", description="紀錄代辦事項")
